@@ -733,7 +733,15 @@ extension ConversationViewController: ConversationCellDelegate {
                     let previewItem = DriftPreviewItem(url: tempFileURL, title: attachment.fileName)
                     self?.previewItem = previewItem
 
-                    if QLPreviewController.canPreview(previewItem) {
+					func canPreviewItem(_ item: DriftPreviewItem) -> Bool {
+						#if targetEnvironment(macCatalyst)
+						return QLPreviewController.canPreviewItem(item)
+						#else
+						return QLPreviewController.canPreview(previewItem)
+						#endif
+					}
+
+                    if canPreviewItem(previewItem) {
                         self?.qlController.dataSource = self
                         self?.qlController.reloadData()
                         self?.present(strongSelf.qlController, animated: true)
